@@ -11,7 +11,7 @@ export type ReadoraRoute =
   | "summary";
 
 const routes: Record<ReadoraRoute, Href> = {
-  chat: "/(tabs)/ai",
+  chat: "/chat",
   flashcards: "/flashcards",
   home: "/(tabs)",
   library: "/(tabs)/library",

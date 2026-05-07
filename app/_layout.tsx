@@ -1,10 +1,14 @@
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { ReadoraProvider } from "@/lib/readoraStore";
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <ReadoraProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </ReadoraProvider>
     </SafeAreaProvider>
   );
 }

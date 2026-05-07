@@ -2,21 +2,28 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { BookCover } from "@/components/readora/BookCover";
-import { QuickAction, SectionTitle, sharedStyles } from "@/components/readora/Common";
+import { FadeInView, QuickAction, SectionTitle, sharedStyles } from "@/components/readora/Common";
 import { colors } from "@/constants/readoraTheme";
 import { Book } from "@/lib/api";
 
 export function HomeScreen({
   books,
   currentBook,
+  onSelectBook,
   user,
   onOpen,
 }: {
   books: Book[];
   currentBook: Book;
+  onSelectBook: (id: string) => void;
   user: { name: string; avatar: string };
   onOpen: (screen: string) => void;
 }) {
+  const openBook = (book: Book) => {
+    onSelectBook(book.id);
+    onOpen("reader");
+  };
+
   return (
     <ScrollView style={sharedStyles.screen} contentContainerStyle={sharedStyles.scrollContent}>
       <View style={styles.header}>
@@ -32,26 +39,28 @@ export function HomeScreen({
         </View>
       </View>
 
-      <Pressable style={styles.continueCard} onPress={() => onOpen("reader")}>
-        <BookCover book={currentBook} size="large" />
-        <View style={styles.continueCopy}>
-          <Text style={styles.continueLabel}>Continue Reading</Text>
-          <Text style={styles.cardTitle}>{currentBook.title}</Text>
-          <Text style={styles.cardMeta}>{currentBook.author}</Text>
-          <View style={styles.smallButton}>
-            <Text style={styles.smallButtonText}>Continue</Text>
+      <FadeInView>
+        <Pressable style={styles.continueCard} onPress={() => openBook(currentBook)}>
+          <BookCover book={currentBook} size="large" />
+          <View style={styles.continueCopy}>
+            <Text style={styles.continueLabel}>Continue Reading</Text>
+            <Text style={styles.cardTitle}>{currentBook.title}</Text>
+            <Text style={styles.cardMeta}>{currentBook.author}</Text>
+            <View style={styles.smallButton}>
+              <Text style={styles.smallButtonText}>Continue</Text>
+            </View>
+            <Text style={styles.timeLeft}>{currentBook.minutesLeft} min left in this chapter</Text>
           </View>
-          <Text style={styles.timeLeft}>{currentBook.minutesLeft} min left in this chapter</Text>
-        </View>
-        <View style={styles.ring}>
-          <Text style={styles.ringText}>{currentBook.progress}%</Text>
-        </View>
-      </Pressable>
+          <View style={styles.ring}>
+            <Text style={styles.ringText}>{currentBook.progress}%</Text>
+          </View>
+        </Pressable>
+      </FadeInView>
 
       <SectionTitle title="Continue Reading" action="See all" onPress={() => onOpen("library")} />
       <View style={styles.bookRow}>
         {books.slice(1, 4).map((book) => (
-          <Pressable key={book.id} style={styles.bookTile} onPress={() => onOpen("reader")}>
+          <Pressable key={book.id} style={styles.bookTile} onPress={() => openBook(book)}>
             <BookCover book={book} />
             <Text style={styles.bookName} numberOfLines={1}>{book.title}</Text>
             <Text style={styles.bookAuthor} numberOfLines={1}>{book.author}</Text>
@@ -70,10 +79,10 @@ export function HomeScreen({
       <SectionTitle title="Recommended for you" action="See all" onPress={() => onOpen("library")} />
       <View style={styles.recommendBand}>
         {books.slice(2, 5).map((book) => (
-          <View key={book.id} style={styles.recommendChip}>
+          <Pressable key={book.id} style={styles.recommendChip} onPress={() => openBook(book)}>
             <BookCover book={book} size="tiny" />
             <Text style={styles.recommendText} numberOfLines={1}>{book.title}</Text>
-          </View>
+          </Pressable>
         ))}
       </View>
     </ScrollView>

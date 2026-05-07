@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ReactNode, useEffect, useRef } from "react";
+import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import { colors } from "@/constants/readoraTheme";
 
@@ -22,24 +23,93 @@ export function SectionTitle({
   );
 }
 
-export function SearchBar({ placeholder }: { placeholder: string }) {
+export function SearchBar({
+  onChangeText,
+  placeholder,
+  value,
+}: {
+  onChangeText?: (text: string) => void;
+  placeholder: string;
+  value?: string;
+}) {
   return (
     <View style={styles.searchBar}>
-      <TextInput placeholder={placeholder} placeholderTextColor="#9AA0B4" style={styles.searchInput} />
+      <Ionicons name="search-outline" size={18} color="#9AA0B4" />
+      <TextInput
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#9AA0B4"
+        style={styles.searchInput}
+        value={value}
+      />
+      {!!value && (
+        <TouchableOpacity onPress={() => onChangeText?.("")}>
+          <Ionicons name="close-circle" size={18} color="#9AA0B4" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
 
-export function Pills({ items, trailingIcon }: { items: string[]; trailingIcon?: boolean }) {
+export function Pills({
+  items,
+  onChange,
+  selected = items[0],
+  trailingIcon,
+}: {
+  items: string[];
+  onChange?: (item: string) => void;
+  selected?: string;
+  trailingIcon?: boolean;
+}) {
   return (
     <View style={styles.pillRow}>
       {items.map((item, index) => (
-        <View key={item} style={[styles.pill, index === 0 && styles.pillActive]}>
-          <Text style={[styles.pillText, index === 0 && styles.pillTextActive]}>{item}</Text>
-        </View>
+        <TouchableOpacity key={item} style={[styles.pill, item === selected && styles.pillActive]} onPress={() => onChange?.(item)}>
+          <Text style={[styles.pillText, item === selected && styles.pillTextActive]}>{item}</Text>
+        </TouchableOpacity>
       ))}
       {trailingIcon && <Ionicons name="options-outline" size={21} color={colors.ink} />}
     </View>
+  );
+}
+
+export function FadeInView({
+  children,
+  delay = 0,
+  style,
+}: {
+  children: ReactNode;
+  delay?: number;
+  style?: object;
+}) {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(14)).current;
+
+  useEffect(() => {
+    const animation = Animated.parallel([
+      Animated.timing(opacity, {
+        delay,
+        duration: 280,
+        toValue: 1,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        delay,
+        duration: 280,
+        toValue: 0,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    animation.start();
+    return () => animation.stop();
+  }, [delay, opacity, translateY]);
+
+  return (
+    <Animated.View style={[style, { opacity, transform: [{ translateY }] }]}>
+      {children}
+    </Animated.View>
   );
 }
 
@@ -118,10 +188,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#F1F3F8",
     paddingHorizontal: 16,
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
     marginBottom: 16,
   },
   searchInput: {
+    flex: 1,
     color: colors.ink,
     fontSize: 14,
   },

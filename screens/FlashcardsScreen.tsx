@@ -2,8 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import { FadeInView, sharedStyles } from "@/components/readora/Common";
 import { Header } from "@/components/readora/Header";
-import { sharedStyles } from "@/components/readora/Common";
 import { colors, shadow } from "@/constants/readoraTheme";
 
 export function FlashcardsScreen({
@@ -28,8 +28,10 @@ export function FlashcardsScreen({
         <Text style={sharedStyles.smallKicker}>{progress}</Text>
       </View>
       <Pressable style={styles.flashcard} onPress={() => setRevealed((value) => !value)}>
-        <Text style={styles.question}>{revealed ? card.answer : card.question}</Text>
-        <Text style={styles.revealText}>Tap to {revealed ? "show question" : "reveal answer"}</Text>
+        <FadeInView key={revealed ? "answer" : "question"}>
+          <Text style={styles.question}>{revealed ? card.answer : card.question}</Text>
+          <Text style={styles.revealText}>Tap to {revealed ? "show question" : "reveal answer"}</Text>
+        </FadeInView>
       </Pressable>
       <View style={styles.difficultyRow}>
         <Difficulty label="Again" color="#EF4444" />

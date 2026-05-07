@@ -1,13 +1,48 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { colors, shadow } from "@/constants/readoraTheme";
 import { sharedStyles } from "@/components/readora/Common";
 
 export function OnboardingScreen({ onStart }: { onStart: () => void }) {
+  const float = useRef(new Animated.Value(0)).current;
+  const intro = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(intro, {
+      duration: 420,
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(float, {
+          duration: 1400,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          duration: 1400,
+          toValue: 0,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    loop.start();
+    return () => loop.stop();
+  }, [float, intro]);
+
+  const heroTranslate = float.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -12],
+  });
+
   return (
     <View style={[sharedStyles.screen, styles.screen]}>
-      <View>
+      <Animated.View style={{ opacity: intro, transform: [{ translateY: intro.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }] }}>
         <Text style={styles.title}>
           <Text style={styles.accent}>AI</Text> Reading{"\n"}
           <Text style={styles.accent}>Companion</Text>
@@ -15,8 +50,8 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
         <Text style={styles.copy}>
           Understand more.{"\n"}Remember longer.{"\n"}Grow every day.
         </Text>
-      </View>
-      <View style={styles.heroArt}>
+      </Animated.View>
+      <Animated.View style={[styles.heroArt, { transform: [{ translateY: heroTranslate }] }]}>
         <View style={styles.personHead}>
           <View style={styles.hair} />
           <View style={styles.face} />
@@ -30,7 +65,7 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
         <View style={styles.bot}>
           <Text style={styles.botFace}>AI</Text>
         </View>
-      </View>
+      </Animated.View>
       <View style={styles.dots}>
         <View style={[styles.dot, styles.dotActive]} />
         <View style={styles.dot} />
