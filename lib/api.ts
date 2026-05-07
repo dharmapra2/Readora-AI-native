@@ -4,6 +4,16 @@ export type ReadoraData = typeof data;
 export type Book = ReadoraData["books"][number];
 export type Note = ReadoraData["notes"][number];
 export type NewBookInput = Pick<Book, "author" | "title"> & Partial<Omit<Book, "author" | "id" | "title">>;
+export type ScanDifficulty = "Simple" | "Normal" | "Academic";
+export type Scan = {
+  bookId: string;
+  createdAt: string;
+  difficulty: ScanDifficulty;
+  explanation: string;
+  id: string;
+  page: number;
+  text: string;
+};
 
 export function getUser() {
   return data.user;

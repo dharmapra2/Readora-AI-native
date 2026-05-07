@@ -73,7 +73,7 @@ export function HomeScreen({
         <QuickAction icon="document-text-outline" label="Summarize" onPress={() => onOpen("summary")} />
         <QuickAction icon="chatbubble-ellipses-outline" label="Ask AI" onPress={() => onOpen("chat")} />
         <QuickAction icon="albums-outline" label="Flashcards" onPress={() => onOpen("flashcards")} />
-        <QuickAction icon="language-outline" label="Translate" onPress={() => onOpen("reader")} />
+        <QuickAction icon="scan-outline" label="Scan" onPress={() => onOpen("scan")} />
       </View>
 
       <SectionTitle title="Recommended for you" action="See all" onPress={() => onOpen("library")} />

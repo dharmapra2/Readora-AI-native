@@ -1,11 +1,12 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { StatCard, sharedStyles } from "@/components/readora/Common";
 import { colors } from "@/constants/readoraTheme";
 
 export function AnalyticsScreen({
   analytics,
+  onOpen,
   user,
 }: {
   analytics: {
@@ -15,6 +16,7 @@ export function AnalyticsScreen({
     aiInteractions: number;
     dailyReadingMinutes: number[];
   };
+  onOpen?: (screen: string) => void;
   user: { streak: number };
 }) {
   const max = Math.max(...analytics.dailyReadingMinutes);
@@ -53,6 +55,10 @@ export function AnalyticsScreen({
         </View>
         <MaterialCommunityIcons name="fire" size={72} color="#FF9F1C" />
       </View>
+      <TouchableOpacity style={styles.settingsButton} onPress={() => onOpen?.("settings")}>
+        <Ionicons name="settings-outline" size={20} color={colors.surface} />
+        <Text style={styles.settingsText}>Settings & Profile</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -138,5 +144,19 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 14,
     fontWeight: "700",
+  },
+  settingsButton: {
+    minHeight: 58,
+    borderRadius: 16,
+    backgroundColor: colors.purple,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 18,
+  },
+  settingsText: {
+    color: colors.surface,
+    fontWeight: "900",
   },
 });

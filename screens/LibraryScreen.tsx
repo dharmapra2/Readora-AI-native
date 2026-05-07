@@ -123,6 +123,14 @@ export function LibraryScreen({
                     <TouchableOpacity onPress={() => onUpdateProgress(book.id, book.progress + 10)}>
                       <Text style={styles.actionText}>+10%</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        onSelectBook(book.id);
+                        onOpen("bookDetail");
+                      }}
+                    >
+                      <Text style={styles.actionText}>Details</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => onUpdateProgress(book.id, Math.max(0, book.progress - 10))}>
                       <Text style={styles.actionText}>-10%</Text>
                     </TouchableOpacity>

@@ -32,7 +32,13 @@ export default function TabsLayout() {
         tabBarIcon: ({ color, focused }) => {
           const routeName = route.name as keyof typeof tabIcons;
           const name = tabIcons[routeName] ?? "ellipse-outline";
-          return <Ionicons name={name} size={route.name === "ai" ? 25 : focused ? 24 : 22} color={color} />;
+          return (
+            <Ionicons
+              name={name}
+              size={route.name === "ai" ? 25 : focused ? 24 : 22}
+              color={color}
+            />
+          );
         },
       })}
     >

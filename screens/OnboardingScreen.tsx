@@ -1,11 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { colors, shadow } from "@/constants/readoraTheme";
 import { sharedStyles } from "@/components/readora/Common";
 
 export function OnboardingScreen({ onStart }: { onStart: () => void }) {
+  const [step, setStep] = useState(0);
+  const [profile, setProfile] = useState("Self-help");
   const float = useRef(new Animated.Value(0)).current;
   const intro = useRef(new Animated.Value(0)).current;
 
@@ -43,13 +45,37 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
   return (
     <View style={[sharedStyles.screen, styles.screen]}>
       <Animated.View style={{ opacity: intro, transform: [{ translateY: intro.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) }] }}>
-        <Text style={styles.title}>
-          <Text style={styles.accent}>AI</Text> Reading{"\n"}
-          <Text style={styles.accent}>Companion</Text>
-        </Text>
-        <Text style={styles.copy}>
-          Understand more.{"\n"}Remember longer.{"\n"}Grow every day.
-        </Text>
+        {step === 0 && (
+          <>
+            <Text style={styles.title}>
+              <Text style={styles.accent}>AI</Text> Reading{"\n"}
+              <Text style={styles.accent}>Companion</Text>
+            </Text>
+            <Text style={styles.copy}>
+              Read smarter.{"\n"}Understand everything.{"\n"}Try it in guest mode.
+            </Text>
+          </>
+        )}
+        {step === 1 && (
+          <>
+            <Text style={styles.title}>Reading{"\n"}Profile</Text>
+            <Text style={styles.copy}>What do you read most?</Text>
+            <View style={styles.choiceGrid}>
+              {["Fiction", "Textbooks", "Self-help", "All"].map((item) => (
+                <Pressable key={item} style={[styles.choice, item === profile && styles.choiceActive]} onPress={() => setProfile(item)}>
+                  <Text style={[styles.choiceText, item === profile && styles.choiceTextActive]}>{item}</Text>
+                </Pressable>
+              ))}
+            </View>
+            <Text style={styles.goalText}>Goal: 5 reading sessions per week</Text>
+          </>
+        )}
+        {step === 2 && (
+          <>
+            <Text style={styles.title}>How it{"\n"}Works</Text>
+            <Text style={styles.copy}>Scan a page.{"\n"}AI explains.{"\n"}Save insights.</Text>
+          </>
+        )}
       </Animated.View>
       <Animated.View style={[styles.heroArt, { transform: [{ translateY: heroTranslate }] }]}>
         <View style={styles.personHead}>
@@ -67,12 +93,12 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
         </View>
       </Animated.View>
       <View style={styles.dots}>
-        <View style={[styles.dot, styles.dotActive]} />
-        <View style={styles.dot} />
-        <View style={styles.dot} />
+        {[0, 1, 2].map((item) => (
+          <View key={item} style={[styles.dot, item === step && styles.dotActive]} />
+        ))}
       </View>
-      <TouchableOpacity style={styles.primaryButton} onPress={onStart}>
-        <Text style={styles.primaryButtonText}>Get Started</Text>
+      <TouchableOpacity style={styles.primaryButton} onPress={() => (step === 2 ? onStart() : setStep((value) => value + 1))}>
+        <Text style={styles.primaryButtonText}>{step === 2 ? "Get Started" : "Next"}</Text>
         <Ionicons name="arrow-forward" color={colors.surface} size={18} />
       </TouchableOpacity>
     </View>
@@ -100,6 +126,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
     marginTop: 24,
+  },
+  choiceGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 22,
+  },
+  choice: {
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  choiceActive: {
+    backgroundColor: colors.softPurple,
+    borderColor: colors.purple,
+  },
+  choiceText: {
+    color: colors.ink,
+    fontWeight: "800",
+  },
+  choiceTextActive: {
+    color: colors.purple,
+  },
+  goalText: {
+    color: colors.ink,
+    fontSize: 14,
+    fontWeight: "800",
+    marginTop: 18,
   },
   heroArt: {
     height: 360,
