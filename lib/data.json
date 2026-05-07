@@ -1,0 +1,166 @@
+{
+  "user": {
+    "name": "Alex",
+    "avatar": "AP",
+    "streak": 7
+  },
+  "currentBookId": "atomic-habits",
+  "books": [
+    {
+      "id": "atomic-habits",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "coverColor": "#F6D7B4",
+      "accent": "#6B4CFF",
+      "progress": 67,
+      "pagesRead": 102,
+      "totalPages": 265,
+      "chapter": "Chapter 3",
+      "chapterTitle": "The Power of Habit",
+      "minutesLeft": 12
+    },
+    {
+      "id": "deep-work",
+      "title": "Deep Work",
+      "author": "Cal Newport",
+      "coverColor": "#111827",
+      "accent": "#111827",
+      "progress": 43,
+      "pagesRead": 130,
+      "totalPages": 304,
+      "chapter": "Chapter 5",
+      "chapterTitle": "Ritualize",
+      "minutesLeft": 18
+    },
+    {
+      "id": "five-am-club",
+      "title": "The 5 AM Club",
+      "author": "Robin Sharma",
+      "coverColor": "#F59E0B",
+      "accent": "#F97316",
+      "progress": 28,
+      "pagesRead": 75,
+      "totalPages": 336,
+      "chapter": "Chapter 4",
+      "chapterTitle": "Own Your Morning",
+      "minutesLeft": 22
+    },
+    {
+      "id": "thinking-fast-slow",
+      "title": "Thinking, Fast and Slow",
+      "author": "Daniel Kahneman",
+      "coverColor": "#F3EFE3",
+      "accent": "#9CA3AF",
+      "progress": 71,
+      "pagesRead": 354,
+      "totalPages": 499,
+      "chapter": "Chapter 8",
+      "chapterTitle": "Judgments",
+      "minutesLeft": 16
+    },
+    {
+      "id": "mindset",
+      "title": "Mindset",
+      "author": "Carol Dweck",
+      "coverColor": "#C7D2FE",
+      "accent": "#4F46E5",
+      "progress": 52,
+      "pagesRead": 148,
+      "totalPages": 288,
+      "chapter": "Chapter 6",
+      "chapterTitle": "Changing Mindsets",
+      "minutesLeft": 20
+    }
+  ],
+  "reader": {
+    "quote": "The secret of getting ahead is getting started.",
+    "paragraphs": [
+      "Habits are the compound interest of self-improvement. They may seem to make little difference in the moment, but the effects of their compounding can be enormous.",
+      "Every action you take is a vote for the type of person you wish to become.",
+      "Instead of focusing on goals, focus on systems."
+    ],
+    "highlight": "Every action you take is a vote for the type of person you wish to become."
+  },
+  "chat": {
+    "prompt": "Can you explain the habit loop in simple words?",
+    "answer": "Absolutely! The habit loop consists of three parts: Cue, the trigger that starts the habit. Routine, the behavior you do. Reward, the benefit you get, which reinforces the habit.",
+    "suggestions": [
+      "Summarize this chapter",
+      "Key takeaways",
+      "Give real life examples",
+      "Create a quiz"
+    ]
+  },
+  "summary": {
+    "chapter": "This chapter explains how habits work and how small changes in your routines can lead to big results over time. It introduces the habit loop and how to build better habits by understanding its mechanism.",
+    "takeaways": [
+      "Habits follow a loop: Cue, Routine, Reward.",
+      "Small changes, repeated consistently, create big results.",
+      "Focus on systems, not just goals.",
+      "Environment plays a huge role in shaping habits."
+    ]
+  },
+  "notes": [
+    {
+      "id": "n1",
+      "text": "Every action you take is a vote for the type of person you wish to become.",
+      "chapter": "Chapter 3",
+      "book": "Atomic Habits",
+      "type": "Highlight",
+      "tone": "#FFF7DF"
+    },
+    {
+      "id": "n2",
+      "text": "Focus on becoming 1% better every day.",
+      "chapter": "Chapter 4",
+      "book": "Atomic Habits",
+      "type": "AI Note",
+      "tone": "#EAF4FF"
+    },
+    {
+      "id": "n3",
+      "text": "Environment is the invisible hand that shapes human behavior.",
+      "chapter": "Chapter 5",
+      "book": "Atomic Habits",
+      "type": "Note",
+      "tone": "#FFECEC"
+    },
+    {
+      "id": "n4",
+      "text": "Create an implementation intention for new habits.",
+      "chapter": "Chapter 6",
+      "book": "Atomic Habits",
+      "type": "AI Note",
+      "tone": "#E9F8EF"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "f1",
+      "question": "What is the first step in building a habit?",
+      "answer": "Make the cue obvious."
+    },
+    {
+      "id": "f2",
+      "question": "What are the three parts of the habit loop?",
+      "answer": "Cue, routine, and reward."
+    }
+  ],
+  "quiz": {
+    "question": "What is the purpose of the reward in the habit loop?",
+    "options": [
+      "To make the habit difficult",
+      "To punish yourself",
+      "To reinforce the habit",
+      "To motivate others"
+    ],
+    "answerIndex": 2
+  },
+  "analytics": {
+    "booksRead": 4,
+    "readingTime": "8h 45m",
+    "pagesRead": 385,
+    "aiInteractions": 62,
+    "dailyReadingMinutes": [85, 150, 92, 148, 102, 122, 64]
+  }
+}

@@ -1,0 +1,142 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+
+import { StatCard, sharedStyles } from "@/components/readora/Common";
+import { colors } from "@/constants/readoraTheme";
+
+export function AnalyticsScreen({
+  analytics,
+  user,
+}: {
+  analytics: {
+    booksRead: number;
+    readingTime: string;
+    pagesRead: number;
+    aiInteractions: number;
+    dailyReadingMinutes: number[];
+  };
+  user: { streak: number };
+}) {
+  const max = Math.max(...analytics.dailyReadingMinutes);
+
+  return (
+    <ScrollView style={sharedStyles.screen} contentContainerStyle={sharedStyles.scrollContent}>
+      <View style={styles.header}>
+        <Text style={sharedStyles.pageTitle}>Reading Analytics</Text>
+        <View style={styles.weekPill}>
+          <Text style={styles.weekText}>This Week</Text>
+          <Ionicons name="chevron-down" size={15} color={colors.ink} />
+        </View>
+      </View>
+      <View style={styles.statsGrid}>
+        <StatCard label="Books Read" value={String(analytics.booksRead)} tint="#F0ECFF" />
+        <StatCard label="Reading Time" value={analytics.readingTime} tint="#FFF4DE" />
+        <StatCard label="Pages Read" value={String(analytics.pagesRead)} tint="#EAF8EF" />
+        <StatCard label="AI Interactions" value={String(analytics.aiInteractions)} tint="#F3EFFF" />
+      </View>
+      <View style={styles.panel}>
+        <Text style={styles.panelTitle}>Daily Reading Time</Text>
+        <View style={styles.chart}>
+          {analytics.dailyReadingMinutes.map((value, index) => (
+            <View key={`${value}-${index}`} style={styles.barColumn}>
+              <View style={[styles.bar, { height: 28 + (value / max) * 88 }]} />
+              <Text style={styles.dayLabel}>{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index]}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+      <View style={styles.streakPanel}>
+        <View>
+          <Text style={styles.panelTitle}>Reading Streak</Text>
+          <Text style={styles.streakNumber}>{user.streak}</Text>
+          <Text style={styles.streakText}>Days in a row</Text>
+        </View>
+        <MaterialCommunityIcons name="fire" size={72} color="#FF9F1C" />
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  weekPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#F2F3F8",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  weekText: {
+    color: colors.ink,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  statsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  panel: {
+    marginTop: 20,
+    borderRadius: 16,
+    backgroundColor: colors.surface,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  panelTitle: {
+    color: colors.ink,
+    fontSize: 16,
+    fontWeight: "900",
+    marginBottom: 14,
+  },
+  chart: {
+    height: 174,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+  },
+  barColumn: {
+    alignItems: "center",
+    gap: 8,
+  },
+  bar: {
+    width: 14,
+    borderRadius: 8,
+    backgroundColor: colors.purple,
+  },
+  dayLabel: {
+    color: colors.muted,
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  streakPanel: {
+    marginTop: 20,
+    minHeight: 138,
+    borderRadius: 16,
+    backgroundColor: colors.surface,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  streakNumber: {
+    color: colors.ink,
+    fontSize: 44,
+    fontWeight: "900",
+    marginTop: 4,
+  },
+  streakText: {
+    color: colors.ink,
+    fontSize: 14,
+    fontWeight: "700",
+  },
+});
