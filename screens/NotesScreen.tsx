@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 
 
 import { FadeInView, Pills, SearchBar, sharedStyles } from "@/components/readora/Common";
 import { colors } from "@/constants/readoraTheme";
-import { Note } from "@/lib/api";
+type Note = { id: string; book: string; text: string; type: string; chapter: string; tone: string };
 
 export function NotesScreen({ notes, onOpen }: { notes: Note[]; onOpen: (screen: string) => void }) {
   const [query, setQuery] = useState("");

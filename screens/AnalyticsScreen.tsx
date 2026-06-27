@@ -10,16 +10,21 @@ export function AnalyticsScreen({
   user,
 }: {
   analytics: {
-    booksRead: number;
-    readingTime: string;
-    pagesRead: number;
-    aiInteractions: number;
-    dailyReadingMinutes: number[];
+    books_read?: number; booksRead?: number;
+    reading_time?: string; readingTime?: string;
+    pages_read?: number; pagesRead?: number;
+    ai_interactions?: number; aiInteractions?: number;
+    daily_reading_minutes?: number[]; dailyReadingMinutes?: number[];
   };
   onOpen?: (screen: string) => void;
   user: { streak: number };
 }) {
-  const max = Math.max(...analytics.dailyReadingMinutes);
+  const booksRead = analytics.books_read ?? analytics.booksRead ?? 0;
+  const readingTime = analytics.reading_time ?? analytics.readingTime ?? "0m";
+  const pagesRead = analytics.pages_read ?? analytics.pagesRead ?? 0;
+  const aiInteractions = analytics.ai_interactions ?? analytics.aiInteractions ?? 0;
+  const dailyReadingMinutes = analytics.daily_reading_minutes ?? analytics.dailyReadingMinutes ?? [0,0,0,0,0,0,0];
+  const max = Math.max(...dailyReadingMinutes, 1);
 
   return (
     <ScrollView style={sharedStyles.screen} contentContainerStyle={sharedStyles.scrollContent}>
@@ -31,15 +36,15 @@ export function AnalyticsScreen({
         </View>
       </View>
       <View style={styles.statsGrid}>
-        <StatCard label="Books Read" value={String(analytics.booksRead)} tint="#F0ECFF" />
-        <StatCard label="Reading Time" value={analytics.readingTime} tint="#FFF4DE" />
-        <StatCard label="Pages Read" value={String(analytics.pagesRead)} tint="#EAF8EF" />
-        <StatCard label="AI Interactions" value={String(analytics.aiInteractions)} tint="#F3EFFF" />
+        <StatCard label="Books Read" value={String(booksRead)} tint="#F0ECFF" />
+        <StatCard label="Reading Time" value={readingTime} tint="#FFF4DE" />
+        <StatCard label="Pages Read" value={String(pagesRead)} tint="#EAF8EF" />
+        <StatCard label="AI Interactions" value={String(aiInteractions)} tint="#F3EFFF" />
       </View>
       <View style={styles.panel}>
         <Text style={styles.panelTitle}>Daily Reading Time</Text>
         <View style={styles.chart}>
-          {analytics.dailyReadingMinutes.map((value, index) => (
+          {dailyReadingMinutes.map((value, index) => (
             <View key={`${value}-${index}`} style={styles.barColumn}>
               <View style={[styles.bar, { height: 28 + (value / max) * 88 }]} />
               <Text style={styles.dayLabel}>{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][index]}</Text>
@@ -51,7 +56,7 @@ export function AnalyticsScreen({
         <View>
           <Text style={styles.panelTitle}>Reading Streak</Text>
           <Text style={styles.streakNumber}>{user.streak}</Text>
-          <Text style={styles.streakText}>Days in a row</Text>
+          <Text style={styles.streakText}>Days in a row! 🔥</Text>
         </View>
         <MaterialCommunityIcons name="fire" size={72} color="#FF9F1C" />
       </View>

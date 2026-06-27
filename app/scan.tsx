@@ -5,7 +5,7 @@ import { routeFor } from "@/lib/routes";
 import { ScanScreen } from "@/screens/ScanScreen";
 
 export default function ScanRoute() {
-  const { addScan, books, currentBook, selectBook } = useReadoraData();
+  const { books, currentBook, selectBook } = useReadoraData();
 
   return (
     <ScanScreen
@@ -13,8 +13,7 @@ export default function ScanRoute() {
       currentBook={currentBook}
       onBack={() => router.back()}
       onSelectBook={selectBook}
-      onCapture={(difficulty) => {
-        addScan(currentBook.id, difficulty);
+      onCapture={() => {
         router.push(routeFor("explanation"));
       }}
     />

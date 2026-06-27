@@ -14,9 +14,11 @@ import {
 import { BookCover } from "@/components/readora/BookCover";
 import { FadeInView, Pills, SearchBar, sharedStyles } from "@/components/readora/Common";
 import { colors, shadow } from "@/constants/readoraTheme";
-import { Book, NewBookInput } from "@/lib/api";
+import { Book } from "@/lib/api";
 
-const filters = ["All", "Books", "Reading", "Completed", "New"];
+type NewBookInput = { title: string; author: string; totalPages?: number };
+
+const filters = ["All", "Books", "PDFs", "Articles", "Notes"];
 
 export function LibraryScreen({
   books,
@@ -27,11 +29,11 @@ export function LibraryScreen({
   onUpdateProgress,
 }: {
   books: Book[];
-  onAddBook: (book: NewBookInput) => void;
+  onAddBook: (book: NewBookInput) => Promise<void> | void;
   onOpen: (screen: string) => void;
-  onRemoveBook: (id: string) => void;
+  onRemoveBook: (id: string) => Promise<void> | void;
   onSelectBook: (id: string) => void;
-  onUpdateProgress: (id: string, progress: number) => void;
+  onUpdateProgress: (id: string, progress: number) => Promise<void> | void;
 }) {
   const [filter, setFilter] = useState(filters[0]);
   const [query, setQuery] = useState("");
@@ -53,9 +55,9 @@ export function LibraryScreen({
       const matchesFilter =
         filter === "All" ||
         filter === "Books" ||
-        (filter === "Reading" && book.progress > 0 && book.progress < 100) ||
-        (filter === "Completed" && book.progress >= 100) ||
-        (filter === "New" && book.progress === 0);
+        filter === "PDFs" ||
+        filter === "Articles" ||
+        filter === "Notes";
 
       return matchesQuery && matchesFilter;
     });
@@ -68,16 +70,7 @@ export function LibraryScreen({
       return;
     }
 
-    onAddBook({
-      author,
-      chapter: "Chapter 1",
-      chapterTitle: "Getting Started",
-      minutesLeft: 15,
-      pagesRead: 0,
-      progress: 0,
-      title,
-      totalPages: Number(pages) || 220,
-    });
+    onAddBook({ title, author, totalPages: Number(pages) || 220 });
     setTitle("");
     setAuthor("");
     setPages("220");

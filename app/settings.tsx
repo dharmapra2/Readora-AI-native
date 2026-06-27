@@ -12,7 +12,7 @@ export default function SettingsRoute() {
       setSettings={store.setSettings}
       onBack={() => router.back()}
       onExport={() => {
-        console.log(JSON.stringify({ books: store.books, notes: store.notes, scans: store.scans, settings: store.settings }, null, 2));
+        console.log(JSON.stringify({ books: store.books, notes: store.notes, settings: store.settings }, null, 2));
       }}
     />
   );

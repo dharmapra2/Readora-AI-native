@@ -5,13 +5,13 @@ import { routeFor } from "@/lib/routes";
 import { BookDetailScreen } from "@/screens/BookDetailScreen";
 
 export default function BookDetailRoute() {
-  const { currentBook, notes, scans } = useReadoraData();
+  const { currentBook, notes } = useReadoraData();
 
   return (
     <BookDetailScreen
       book={currentBook}
-      notes={notes}
-      scans={scans}
+      notes={notes as any}
+      scans={[]}
       onBack={() => router.back()}
       onOpen={(screen) => router.push(routeFor(screen))}
     />

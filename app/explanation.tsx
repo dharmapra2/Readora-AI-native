@@ -5,7 +5,16 @@ import { routeFor } from "@/lib/routes";
 import { ExplanationScreen } from "@/screens/ExplanationScreen";
 
 export default function ExplanationRoute() {
-  const { addNote, selectedScan } = useReadoraData();
+  const { addNote, reader, currentBook } = useReadoraData();
+  const selectedScan = {
+    id: "live",
+    bookId: currentBook?.id ?? "",
+    createdAt: new Date().toISOString(),
+    difficulty: "Normal" as const,
+    explanation: "",
+    page: currentBook?.pagesRead ?? 0,
+    text: reader?.paragraphs?.[0] ?? "",
+  };
 
   return (
     <ExplanationScreen

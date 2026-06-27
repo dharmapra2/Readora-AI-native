@@ -9,12 +9,12 @@ export default function LibraryRoute() {
 
   return (
     <LibraryScreen
-      books={books}
-      onAddBook={addBook}
+      books={books as any}
+      onAddBook={(input) => { addBook(input); }}
       onOpen={(screen) => router.push(routeFor(screen))}
       onRemoveBook={removeBook}
       onSelectBook={selectBook}
-      onUpdateProgress={updateBookProgress}
+      onUpdateProgress={(id, progress) => updateBookProgress(id, progress)}
     />
   );
 }

@@ -1,17 +1,50 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Header } from "@/components/readora/Header";
 import { sharedStyles } from "@/components/readora/Common";
 import { colors } from "@/constants/readoraTheme";
+import { api } from "@/lib/apiService";
+
+const TABS = ["Overview", "Key Takeaways", "Quotes"] as const;
+const ICONS = [
+  "book-outline",
+  "flame-outline",
+  "leaf-outline",
+  "sparkles-outline",
+] as const;
+const ICON_BG = ["#F0ECFF", "#FFF2D8", "#E8F8EF", "#EFEAFF"];
 
 export function SummaryScreen({
-  summary,
+  summary: staticSummary,
   onBack,
+  readerText,
+  bookTitle,
 }: {
   summary: { chapter: string; takeaways: string[] };
   onBack: () => void;
+  readerText?: string;
+  bookTitle?: string;
 }) {
+  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("Overview");
+  const [summaryText, setSummaryText] = useState(staticSummary.chapter);
+  const [keyPoints, setKeyPoints] = useState(staticSummary.takeaways);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!readerText) return;
+    setLoading(true);
+    api
+      .summary(readerText, bookTitle)
+      .then((res) => {
+        setSummaryText(res.summary);
+        setKeyPoints(res.key_points);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [readerText, bookTitle]);
+
   return (
     <ScrollView style={sharedStyles.screen} contentContainerStyle={sharedStyles.scrollContent}>
       <Header
@@ -19,33 +52,65 @@ export function SummaryScreen({
         onBack={onBack}
         right={<Ionicons name="ellipsis-vertical" size={22} color={colors.ink} />}
       />
+
       <View style={styles.segmented}>
-        {["Overview", "Key Takeaways", "Quotes"].map((item, index) => (
-          <View key={item} style={[styles.segment, index === 0 && styles.segmentActive]}>
-            <Text style={[styles.segmentText, index === 0 && styles.segmentTextActive]}>{item}</Text>
-          </View>
+        {TABS.map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.segment, activeTab === tab && styles.segmentActive]}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text style={[styles.segmentText, activeTab === tab && styles.segmentTextActive]}>
+              {tab}
+            </Text>
+          </TouchableOpacity>
         ))}
       </View>
-      <View style={styles.summaryCard}>
-        <Text style={styles.panelTitle}>Chapter Summary</Text>
-        <Text style={styles.summaryText}>{summary.chapter}</Text>
-      </View>
-      <View style={styles.whitePanel}>
-        <Text style={styles.panelTitle}>Key Takeaways</Text>
-        {summary.takeaways.map((takeaway, index) => (
-          <View key={takeaway} style={styles.takeawayRow}>
-            <View style={[styles.takeawayIcon, { backgroundColor: ["#F0ECFF", "#FFF2D8", "#E8F8EF", "#EFEAFF"][index] }]}>
-              <Ionicons
-                name={["book-outline", "flame-outline", "leaf-outline", "sparkles-outline"][index] as keyof typeof Ionicons.glyphMap}
-                size={18}
-                color={colors.purple}
-              />
+
+      {loading ? (
+        <View style={styles.loadingWrap}>
+          <ActivityIndicator color={colors.purple} size="large" />
+          <Text style={styles.loadingText}>Generating summary with AI...</Text>
+        </View>
+      ) : (
+        <>
+          {activeTab === "Overview" && (
+            <View style={styles.summaryCard}>
+              <Text style={styles.panelTitle}>Chapter Summary</Text>
+              <Text style={styles.summaryText}>{summaryText}</Text>
             </View>
-            <Text style={styles.takeawayText}>{takeaway}</Text>
-          </View>
-        ))}
-      </View>
+          )}
+
+          {activeTab === "Key Takeaways" && (
+            <View style={styles.whitePanel}>
+              <Text style={styles.panelTitle}>Key Takeaways</Text>
+              {keyPoints.map((point, i) => (
+                <View key={i} style={styles.takeawayRow}>
+                  <View style={[styles.takeawayIcon, { backgroundColor: ICON_BG[i % ICON_BG.length] }]}>
+                    <Ionicons name={ICONS[i % ICONS.length]} size={18} color={colors.purple} />
+                  </View>
+                  <Text style={styles.takeawayText}>{point}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {activeTab === "Quotes" && (
+            <View style={styles.whitePanel}>
+              <Text style={styles.panelTitle}>Notable Quotes</Text>
+              <View style={styles.quoteCard}>
+                <Text style={styles.quoteText}>
+                  {`"Every action you take is a vote for the type of person you wish to become."`}
+                </Text>
+                <Text style={styles.quoteAuthor}>— Atomic Habits</Text>
+              </View>
+            </View>
+          )}
+        </>
+      )}
+
       <TouchableOpacity style={styles.primaryButton}>
+        <Ionicons name="git-network-outline" size={18} color={colors.surface} style={{ marginRight: 8 }} />
         <Text style={styles.primaryButtonText}>Generate Mind Map</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -77,6 +142,17 @@ const styles = StyleSheet.create({
   segmentTextActive: {
     color: colors.purple,
   },
+  loadingWrap: {
+    height: 220,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 16,
+  },
+  loadingText: {
+    color: colors.muted,
+    fontSize: 14,
+    fontWeight: "600",
+  },
   summaryCard: {
     marginTop: 22,
     borderRadius: 16,
@@ -95,7 +171,7 @@ const styles = StyleSheet.create({
     lineHeight: 25,
   },
   whitePanel: {
-    marginTop: 20,
+    marginTop: 22,
     borderRadius: 16,
     backgroundColor: colors.surface,
     padding: 20,
@@ -114,6 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0,
   },
   takeawayText: {
     flex: 1,
@@ -121,12 +198,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
   },
+  quoteCard: {
+    backgroundColor: "#F5F3FF",
+    borderRadius: 14,
+    padding: 18,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.purple,
+  },
+  quoteText: {
+    color: "#252159",
+    fontSize: 15,
+    lineHeight: 24,
+    fontStyle: "italic",
+    marginBottom: 10,
+  },
+  quoteAuthor: {
+    color: colors.purple,
+    fontSize: 13,
+    fontWeight: "700",
+  },
   primaryButton: {
     minHeight: 58,
     borderRadius: 16,
     backgroundColor: colors.purple,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
     marginTop: 18,
   },
   primaryButtonText: {
