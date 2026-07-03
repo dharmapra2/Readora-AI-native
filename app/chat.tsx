@@ -5,12 +5,11 @@ import { routeFor } from "@/lib/routes";
 import { ChatScreen } from "@/screens/ChatScreen";
 
 export default function ChatRoute() {
-  const { chat, currentBook } = useReadoraData();
+  const { currentBook } = useReadoraData();
 
   return (
     <ChatScreen
       book={currentBook}
-      chat={chat}
       onBack={() => router.back()}
       onOpen={(screen) => router.push(routeFor(screen))}
     />

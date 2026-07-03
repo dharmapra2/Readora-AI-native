@@ -18,23 +18,25 @@ import { colors } from "@/constants/readoraTheme";
 import { Book } from "@/lib/api";
 import { api, ChatMessage } from "@/lib/apiService";
 
+const SUGGESTIONS = [
+  "Summarize this chapter",
+  "Who is the main character?",
+  "What's the key theme?",
+  "Create a quiz",
+];
+
 export function ChatScreen({
   book,
-  chat,
   onBack,
   onOpen,
   inTab,
 }: {
   book: Book;
-  chat: { prompt: string; answer: string; suggestions: string[] };
   onBack?: () => void;
   onOpen: (screen: string) => void;
   inTab?: boolean;
 }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "user", content: chat.prompt },
-    { role: "assistant", content: chat.answer },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
@@ -82,6 +84,13 @@ export function ChatScreen({
         contentContainerStyle={[styles.content, inTab && styles.tabContent]}
         onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
       >
+        {messages.length === 0 && (
+          <View style={styles.emptyState}>
+            <Ionicons name="sparkles" size={32} color={colors.purple} />
+            <Text style={styles.emptyTitle}>Ask anything about</Text>
+            <Text style={styles.emptyBook} numberOfLines={2}>{book.title}</Text>
+          </View>
+        )}
         {messages.map((msg, i) =>
           msg.role === "user" ? (
             <View key={i} style={styles.userBubble}>
@@ -100,7 +109,7 @@ export function ChatScreen({
         )}
         <Text style={[sharedStyles.sectionHeading, styles.suggestLabel]}>Suggested Prompts</Text>
         <View style={styles.promptWrap}>
-          {chat.suggestions.map((s) => (
+          {SUGGESTIONS.map((s) => (
             <TouchableOpacity key={s} style={styles.promptChip} onPress={() => send(s)}>
               <Text style={styles.promptChipText}>{s}</Text>
             </TouchableOpacity>
@@ -136,6 +145,24 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     paddingBottom: 190,
+  },
+  emptyState: {
+    alignItems: "center",
+    paddingVertical: 40,
+    gap: 8,
+  },
+  emptyTitle: {
+    color: colors.muted,
+    fontSize: 15,
+    fontWeight: "600",
+    marginTop: 8,
+  },
+  emptyBook: {
+    color: colors.ink,
+    fontSize: 16,
+    fontWeight: "800",
+    textAlign: "center",
+    paddingHorizontal: 32,
   },
   suggestLabel: {
     marginTop: 8,

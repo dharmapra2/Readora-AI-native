@@ -1,16 +1,19 @@
 import { router } from "expo-router";
 
+import { getReader } from "@/lib/api";
 import { useReadoraData } from "@/hooks/useReadoraData";
 import { routeFor } from "@/lib/routes";
 import { ReaderScreen } from "@/screens/ReaderScreen";
 
+const staticReader = getReader();
+
 export default function ReaderRoute() {
-  const { currentBook, reader } = useReadoraData();
+  const { currentBook } = useReadoraData();
 
   return (
     <ReaderScreen
       book={currentBook}
-      reader={reader}
+      reader={staticReader}
       onBack={() => router.back()}
       onOpen={(screen) => router.push(routeFor(screen))}
     />

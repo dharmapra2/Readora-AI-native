@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import { getChat, getFlashcards, getQuiz, getReader, getSummary, getUser } from "@/lib/api";
+import { useAuth } from "@/lib/authStore";
 import { AnalyticsRecord, BookRecord, NoteRecord, analyticsApi, booksApi, notesApi } from "@/lib/apiService";
 
 // ── Mapped types the UI uses ──────────────────────────────────────────────────
@@ -54,11 +54,6 @@ type ReadoraStore = {
   notes: Note[];
   analytics: AnalyticsRecord;
   user: { name: string; avatar: string; streak: number };
-  reader: ReturnType<typeof getReader>;
-  chat: ReturnType<typeof getChat>;
-  flashcards: ReturnType<typeof getFlashcards>;
-  quiz: ReturnType<typeof getQuiz>;
-  summary: ReturnType<typeof getSummary>;
   loading: boolean;
 
   selectBook: (id: string) => void;
@@ -88,6 +83,7 @@ const DEFAULT_ANALYTICS: AnalyticsRecord = {
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 export function ReadoraProvider({ children }: { children: ReactNode }) {
+  const { authState } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsRecord>(DEFAULT_ANALYTICS);
@@ -101,8 +97,18 @@ export function ReadoraProvider({ children }: { children: ReactNode }) {
     offlineMode: false,
   });
 
+  const isAuthenticated = authState.status === "authenticated";
+
   useEffect(() => {
+    if (!isAuthenticated) {
+      setBooks([]);
+      setNotes([]);
+      setAnalytics(DEFAULT_ANALYTICS);
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
+    setLoading(true);
     async function load() {
       try {
         const [booksData, notesData, analyticsData] = await Promise.all([
@@ -117,19 +123,26 @@ export function ReadoraProvider({ children }: { children: ReactNode }) {
         setAnalytics(analyticsData);
         setSelectedBookId(mapped[0]?.id ?? null);
       } catch {
-        // Fall through — app still works with static demo data
+        // Network error — app still works with empty state
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
     load();
     return () => { cancelled = true; };
-  }, []);
+  }, [isAuthenticated]);
 
   const currentBook = useMemo(
     () => books.find((b) => b.id === selectedBookId) ?? books[0] ?? ({} as Book),
     [books, selectedBookId],
   );
+
+  const authUser = authState.status === "authenticated" ? authState.user : null;
+  const user = useMemo(() => ({
+    name: authUser?.full_name ?? authUser?.username ?? "Reader",
+    avatar: (authUser?.full_name ?? authUser?.username ?? "R").slice(0, 2).toUpperCase(),
+    streak: analytics.streak,
+  }), [authUser, analytics.streak]);
 
   const addBook = useCallback(
     async (input: { title: string; author: string; totalPages?: number }) => {
@@ -198,19 +211,13 @@ export function ReadoraProvider({ children }: { children: ReactNode }) {
     setAnalytics(data);
   }, []);
 
-  const staticUser = getUser();
   const value = useMemo<ReadoraStore>(
     () => ({
       books,
       currentBook,
       notes,
       analytics,
-      user: { ...staticUser, streak: analytics.streak },
-      reader: getReader(),
-      chat: getChat(),
-      flashcards: getFlashcards(),
-      quiz: getQuiz(),
-      summary: getSummary(),
+      user,
       loading,
       selectBook: setSelectedBookId,
       addBook,
@@ -222,8 +229,7 @@ export function ReadoraProvider({ children }: { children: ReactNode }) {
       settings,
       setSettings: (next) => setSettingsState((s) => ({ ...s, ...next })),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [books, currentBook, notes, analytics, loading, settings],
+    [books, currentBook, notes, analytics, user, loading, settings, addBook, removeBook, updateBookProgress, addNote, removeNote, refreshAnalytics],
   );
 
   return <ReadoraContext.Provider value={value}>{children}</ReadoraContext.Provider>;

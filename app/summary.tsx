@@ -1,15 +1,19 @@
 import { router } from "expo-router";
 
+import { getReader, getSummary } from "@/lib/api";
 import { useReadoraData } from "@/hooks/useReadoraData";
 import { SummaryScreen } from "@/screens/SummaryScreen";
 
+const staticReader = getReader();
+const staticSummary = getSummary();
+
 export default function SummaryRoute() {
-  const { summary, reader, currentBook } = useReadoraData();
-  const readerText = reader.paragraphs.join(" ");
+  const { currentBook } = useReadoraData();
+  const readerText = staticReader.paragraphs.join(" ");
 
   return (
     <SummaryScreen
-      summary={summary}
+      summary={staticSummary}
       onBack={() => router.back()}
       readerText={readerText}
       bookTitle={currentBook.title}

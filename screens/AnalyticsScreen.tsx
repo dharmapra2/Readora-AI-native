@@ -7,6 +7,7 @@ import { colors } from "@/constants/readoraTheme";
 export function AnalyticsScreen({
   analytics,
   onOpen,
+  onLogout,
   user,
 }: {
   analytics: {
@@ -17,7 +18,8 @@ export function AnalyticsScreen({
     daily_reading_minutes?: number[]; dailyReadingMinutes?: number[];
   };
   onOpen?: (screen: string) => void;
-  user: { streak: number };
+  onLogout?: () => void;
+  user: { name?: string; avatar?: string; streak: number };
 }) {
   const booksRead = analytics.books_read ?? analytics.booksRead ?? 0;
   const readingTime = analytics.reading_time ?? analytics.readingTime ?? "0m";
@@ -64,6 +66,12 @@ export function AnalyticsScreen({
         <Ionicons name="settings-outline" size={20} color={colors.surface} />
         <Text style={styles.settingsText}>Settings & Profile</Text>
       </TouchableOpacity>
+      {onLogout && (
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+          <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+          <Text style={styles.logoutText}>Sign out</Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 }
@@ -163,5 +171,22 @@ const styles = StyleSheet.create({
   settingsText: {
     color: colors.surface,
     fontWeight: "900",
+  },
+  logoutButton: {
+    minHeight: 48,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: "#fecaca",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  logoutText: {
+    color: "#ef4444",
+    fontWeight: "700",
+    fontSize: 14,
   },
 });

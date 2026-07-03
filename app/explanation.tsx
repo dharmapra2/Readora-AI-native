@@ -1,11 +1,14 @@
 import { router } from "expo-router";
 
+import { getReader } from "@/lib/api";
 import { useReadoraData } from "@/hooks/useReadoraData";
 import { routeFor } from "@/lib/routes";
 import { ExplanationScreen } from "@/screens/ExplanationScreen";
 
+const staticReader = getReader();
+
 export default function ExplanationRoute() {
-  const { addNote, reader, currentBook } = useReadoraData();
+  const { addNote, currentBook } = useReadoraData();
   const selectedScan = {
     id: "live",
     bookId: currentBook?.id ?? "",
@@ -13,7 +16,7 @@ export default function ExplanationRoute() {
     difficulty: "Normal" as const,
     explanation: "",
     page: currentBook?.pagesRead ?? 0,
-    text: reader?.paragraphs?.[0] ?? "",
+    text: staticReader?.paragraphs?.[0] ?? "",
   };
 
   return (
